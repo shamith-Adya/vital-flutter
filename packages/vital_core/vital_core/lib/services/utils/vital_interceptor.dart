@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:chopper/chopper.dart';
 import 'package:vital_core/core.dart' as vital_core;
 
-class VitalInterceptor extends HeadersInterceptor {
+class VitalInterceptor implements Interceptor {
   final String? apiKey;
   final bool useAccessToken;
 
-  VitalInterceptor(this.useAccessToken, this.apiKey) : super({}) {
+  VitalInterceptor(this.useAccessToken, this.apiKey) {
     if (useAccessToken && apiKey != null) {
       throw Exception("useAccessToken is true, but an API key is provided.");
     }
@@ -19,18 +19,17 @@ class VitalInterceptor extends HeadersInterceptor {
   }
 
   @override
-  Future<Request> onRequest(Request request) async {
-    Map<String, String> headers;
+  FutureOr<Response<BodyType>> intercept<BodyType>(
+    Chain<BodyType> chain,
+  ) async {
+    final headers = useAccessToken
+        ? await vital_core.getVitalAPIHeaders()
+        : {
+            "X-Vital-API-Key": apiKey!,
+            "X-Vital-SDK-Note": "flutter,apikey"
+          };
 
-    if (useAccessToken) {
-      headers = await vital_core.getVitalAPIHeaders();
-    } else {
-      headers = {
-        "X-Vital-API-Key": apiKey!,
-        "X-Vital-SDK-Note": "flutter,apikey"
-      };
-    }
-
-    return applyHeaders(request, headers);
+    final updatedRequest = applyHeaders(chain.request, headers);
+    return chain.proceed(updatedRequest);
   }
 }

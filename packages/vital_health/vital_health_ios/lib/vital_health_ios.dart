@@ -609,6 +609,6 @@ VitalException? _mapError(dynamic arguments) {
         return UnsupportedProviderException(message);
     }
 
-    return UnknownException(code + " " + message);
+    return UnknownException("$code $message");
   }
 }

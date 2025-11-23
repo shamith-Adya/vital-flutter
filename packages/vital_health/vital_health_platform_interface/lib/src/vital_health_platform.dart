@@ -1,5 +1,4 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:vital_core/vital_core.dart';
 import 'package:vital_health_platform_interface/vital_health_platform_interface.dart';
 
 class VitalHealthPlatform extends PlatformInterface {

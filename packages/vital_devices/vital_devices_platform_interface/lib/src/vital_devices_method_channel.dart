@@ -238,7 +238,7 @@ class VitalDevicesMethodChannel extends VitalDevicesPlatform {
           return BloodPressureReadingErrorException(message);
       }
 
-      return UnknownException(code + " " + message);
+      return UnknownException("$code $message");
     }
   }
 }
